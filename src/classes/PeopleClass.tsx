@@ -6,6 +6,8 @@ import "firebase/firestore"
 import constants from "../utils/constants";
 import UpdateObject from "./PersonUpdateInterface";
 
+const lastUpdate: any = {}
+
 export default class PeopleClass {
     list: Person[]
     
@@ -29,7 +31,10 @@ export default class PeopleClass {
     }
 
     getSortedList() {
-        return this.list.slice().sort((a, b) => a.created > b.created ? 1 : -1)
+        const sortingFunction = (a: Person, b: Person) => a.created > b.created ? 1 : -1
+        const hiddenPeople = this.list.filter(person => person.hide).sort(sortingFunction)
+        const unhiddenPeople = this.list.filter(person => !person.hide).sort(sortingFunction)
+        return unhiddenPeople.concat(hiddenPeople)
     }
 
     deepCopy() {
@@ -45,7 +50,14 @@ export default class PeopleClass {
         updateObject: UpdateObject,
         setPeople: SetterOrUpdater<PeopleClass>
     ) {
-        firebase.firestore().collection(constants.PEOPLE_COLLECTION).doc(id).update(updateObject)
+        const updateNumber = lastUpdate[id] === undefined ? 0 : lastUpdate[id] + 1
+        lastUpdate[id] = updateNumber
+        setTimeout(() => {
+            if (lastUpdate[id] !== updateNumber) return
+            firebase.firestore().collection(constants.PEOPLE_COLLECTION).doc(id).update(updateObject).then(() => {
+                console.log('updated', {id}, {updateObject})
+            })
+        }, constants.UPDATE_DEBOUNCE_TIME);
         setPeople(oldPeople => {
             const newPeople = oldPeople.deepCopy()
             newPeople.list = newPeople.list.map(person => {

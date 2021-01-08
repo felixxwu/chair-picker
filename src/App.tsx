@@ -5,12 +5,12 @@ import PersonCircle from './components/PersonCircle'
 import PeopleList from './components/PeopleList';
 import firebase from 'firebase/app'
 import "firebase/firestore"
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import peopleAtom from './atoms/peopleAtom';
 import PeopleClass from './classes/PeopleClass';
 
 function App() {
-    const setPeople = useSetRecoilState(peopleAtom)
+    const [people, setPeople] = useRecoilState(peopleAtom)
     
     useEffect(() => {
         firebase.firestore().collection('people').onSnapshot(querySnapshot => {
@@ -21,7 +21,11 @@ function App() {
     
     return (
         <AppDiv className="grid3x3">
-            <PeopleList></PeopleList>
+            {people.list.length === 0 ? (
+                <span>Loading dev team...</span>
+            ) : (
+                <PeopleList></PeopleList>
+            )}
         </AppDiv>
     );
 }
@@ -48,6 +52,7 @@ const AppDiv = styled.div`
     width: 100%;
     height: 100%;
     font-family: 'Lexend Deca', sans-serif;
+    color: var(--white);
 `
 
 export default App;

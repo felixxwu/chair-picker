@@ -32,14 +32,21 @@ function PersonCircle(props: {
         firebase.firestore().collection(constants.PEOPLE_COLLECTION).doc(props.id).delete()
     }
 
+    const handleHide = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+        event.stopPropagation()
+        people.updatePerson(props.id, {hide: !person.hide}, setPeople)
+    }
+
     return (
         <PersonCircleDiv
             id={props.id}
             className="grid3x3"
             onClick={handleClick}
-            theme={{colour}}
+            theme={{colour, hide: person.hide}}
         >
-            <Button className="a2">hide</Button>
+            <Button className="a2" onClick={handleHide}>
+                {person.hide ? constants.UNHIDE_TEXT : constants.HIDE_TEXT}
+            </Button>
             <NameInput
                 className="a5"
                 value={person.name}
@@ -47,7 +54,9 @@ function PersonCircle(props: {
                 ref={inputRef}
                 theme={{nameLength: person.name.length}}
             />
-            <Button className="a8" onClick={handleDelete}>delete</Button>
+            <Button className="a8" onClick={handleDelete}>
+                {constants.DELETE_TEXT}
+            </Button>
         </PersonCircleDiv>
     );
 }
@@ -61,6 +70,7 @@ const PersonCircleDiv = styled.div`
     border: var(--personCircleBorderWidth) solid var(--white);
     box-sizing: border-box;
     cursor: text;
+    opacity: ${props => props.theme.hide ? constants.HIDDEN_OPACITY : 1};
 
     --buttonDisplay: none;
     &:hover {
