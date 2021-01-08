@@ -1,35 +1,21 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components'
 import constants from '../utils/constants';
-import AddIconSvg from '../images/add.svg'
-import firebase from 'firebase/app'
 import "firebase/firestore"
 import { useRecoilState } from 'recoil';
 import peopleAtom from '../atoms/peopleAtom';
-import findDistinctHue from '../utils/findDistinctHue';
 import Person from '../classes/PersonClass';
 import warning from '../utils/warning';
 import hsl2rgb from '../utils/hsl2rgb';
-import PeopleClass from '../classes/PeopleClass';
+import isNewElectAtom from '../atoms/isNewElectAtom';
 
 function ElectedPerson() {
     const [people, setPeople] = useRecoilState(peopleAtom)
+    const [isNewElect, setIsNewElect] = useRecoilState(isNewElectAtom)
     const [shufflingPerson, setShufflingPerson] = useState<Person | null>(null)
     const elected = shufflingPerson === null ? people.getElected() : shufflingPerson
-    if (elected === null) return warning('elected person is null')
 
-    const colour = hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
-
-    const handleElect = () => {
-        const candidates = people.list.filter(person => person.id !== elected.id)
-        const newElected = candidates[Math.floor(Math.random() * candidates.length)]
-        people.updatePerson(newElected.id, {elected: (new Date()).getTime()}, setPeople)
-        shufflePeople(getListOfPeople()).then(() => {
-            setShufflingPerson(null)
-        })
-    }
-
-    const getListOfPeople = () => {
+    const getListOfPeople = useCallback(() => {
         let randomPeople = []
         const offset = Math.floor(Math.random() * constants.SHUFFLE_LENGTH)
         for (let i = 0; i < constants.SHUFFLE_LENGTH; i++) {
@@ -37,12 +23,11 @@ function ElectedPerson() {
             randomPeople.push(randomPerson)
         }
         return randomPeople
-    }
+    }, [people])
 
-    const shufflePeople = (listOfPeople: Person[]) => {
+    const shufflePeople = useCallback((listOfPeople: Person[]) => {
         return new Promise<void>(res => {
             const delay = constants.SHUFFLE_BASE_INTERVAL * (1 / Math.pow(listOfPeople.length + 1, constants.SHUFFLE_SLOPE))
-            console.log(delay)
             if (listOfPeople.length === 0) {
                 setTimeout(() => {
                     res()
@@ -54,6 +39,29 @@ function ElectedPerson() {
             setTimeout(() => {
                 shufflePeople(listOfPeople.slice(1)).then(res)
             }, delay);
+        })
+    }, [])
+
+    useEffect(() => {
+        if (isNewElect) {
+            setIsNewElect(false)
+            shufflePeople(getListOfPeople()).then(() => {
+                setShufflingPerson(null)
+            })
+        }
+    }, [isNewElect, getListOfPeople, setIsNewElect, shufflePeople])
+    
+    if (elected === null) return warning('elected person is null')
+
+    const colour = hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
+
+    const handleElect = () => {
+        if (shufflingPerson !== null) return
+        const candidates = people.list.filter(person => person.id !== elected.id)
+        const newElected = candidates[Math.floor(Math.random() * candidates.length)]
+        people.updatePerson(newElected.id, {elected: (new Date()).getTime()}, setPeople)
+        shufflePeople(getListOfPeople()).then(() => {
+            setShufflingPerson(null)
         })
     }
 
@@ -100,6 +108,7 @@ const Title = styled.span`
     padding: var(--titlePadding);
     font-size: var(--titleFontSize);
     font-weight: bold;
+    text-align: center;
 `
 
 const ElectButton = styled.button`

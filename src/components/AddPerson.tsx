@@ -4,13 +4,13 @@ import constants from '../utils/constants';
 import AddIconSvg from '../images/add.svg'
 import firebase from 'firebase/app'
 import "firebase/firestore"
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import peopleAtom from '../atoms/peopleAtom';
 import findDistinctHue from '../utils/findDistinctHue';
 import Person from '../classes/PersonClass';
 
 function AddPerson() {
-    const [people, setPeople] = useRecoilState(peopleAtom)
+    const people = useRecoilValue(peopleAtom)
 
     
     const handleClick = () => {

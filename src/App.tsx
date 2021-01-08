@@ -4,33 +4,54 @@ import styled from 'styled-components'
 import PeopleList from './components/PeopleList';
 import firebase from 'firebase/app'
 import "firebase/firestore"
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import peopleAtom from './atoms/peopleAtom';
 import PeopleClass from './classes/PeopleClass';
 import ElectedPerson from './components/ElectedPerson';
+import isNewElectAtom from './atoms/isNewElectAtom';
+import constants from './utils/constants';
 
 function App() {
-    const [people, setPeople] = useRecoilState(peopleAtom)
+    const setPeople = useSetRecoilState(peopleAtom)
+    const setIsNewElect = useSetRecoilState(isNewElectAtom)
     const [loading, setLoading] = useState(true)
     
     useEffect(() => {
-        firebase.firestore().collection('people').onSnapshot(querySnapshot => {
+        firebase.firestore().collection(constants.PEOPLE_COLLECTION).onSnapshot(querySnapshot => {
             const peopleJson = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id}))
-            setPeople(new PeopleClass(peopleJson))
+            const newPeople = new PeopleClass(peopleJson)
+            let shouldSetIsNewElect = false
+            setPeople(oldPeople => {
+                if (detectNewElect(oldPeople, newPeople)) {
+                    shouldSetIsNewElect = true
+                }
+                return newPeople
+            })
+            if (shouldSetIsNewElect) {
+                setIsNewElect(true)
+            }
             setLoading(false)
         })
-    }, [])
+    }, [setIsNewElect, setPeople])
+
+    const detectNewElect = (oldPeople: PeopleClass, newPeople: PeopleClass) => {
+        const oldElect = oldPeople.getElected()
+        const newElect = newPeople.getElected()
+        if (oldElect === null) return false
+        if (newElect === null) return false
+        return oldElect.id !== newElect.id
+    }
     
     return (
         <AppDiv className="grid3x3">
-            <Scrollable>
+            <div>
                 <ElectedPerson></ElectedPerson>
                 {loading ? (
                     <span>Loading dev team...</span>
                 ) : (
                     <PeopleList></PeopleList>
                 )}
-            </Scrollable>
+            </div>
         </AppDiv>
     );
 }
@@ -38,7 +59,7 @@ function App() {
 const AppDiv = styled.div`
     --personCircleWidth: 100px;
     --personCircleHeight: var(--personCircleWidth);
-    --personCircleTextWidth: 80px;
+    --personCircleTextWidth: 70px;
     --personCircleMaxFontSize: 40px;
     --personCircleBorderRadius: calc(var(--personCircleHeight) / 2);
     --personCircleBorderWidth: 2px;
@@ -65,13 +86,15 @@ const AppDiv = styled.div`
     --white: hsl(0, 0%, var(--lightness));
     --offBlack: hsl(0, 0%, 25%);
     --shortTransition: 0.3s;
-    --extraScrollPadding: 100px;
+    --extraScrollPadding: 30px;
     --lexend: 'Lexend Deca', sans-serif;
 
     width: 100%;
     height: 100%;
     font-family: var(--lexend);
     color: var(--white);
+    padding-top: var(--extraScrollPadding);
+    padding-bottom: var(--extraScrollPadding);
 
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
@@ -80,18 +103,6 @@ const AppDiv = styled.div`
     -ms-user-select: none; /* Internet Explorer/Edge */
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
-`
-
-const Scrollable = styled.div`
-    padding-top: var(--extraScrollPadding);
-    padding-bottom: var(--extraScrollPadding);
-    max-height: 100vh;
-    overflow-x: auto;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-    &::-webkit-scrollbar {
-        display: none;
-    }
 `
 
 export default App;

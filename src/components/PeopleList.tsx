@@ -1,12 +1,12 @@
 import React from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components'
 import peopleAtom from '../atoms/peopleAtom';
 import AddPerson from './AddPerson';
 import PersonCircle from './PersonCircle';
 
 function PeopleList() {
-    const [people, setPeople] = useRecoilState(peopleAtom)
+    const people = useRecoilValue(peopleAtom)
     
     return (
         <PeopleListDiv>
@@ -22,6 +22,7 @@ const PeopleListDiv = styled.div`
     display: grid;
     margin: auto;
     max-width: var(--peopleListWidth);
+    width: fit-content;
     grid-template-columns: repeat(auto-fill, var(--personCircleWidth));
     grid-template-rows: repeat(auto-fill, var(--personCircleHeight));
     grid-gap: var(--personCircleMargin);
