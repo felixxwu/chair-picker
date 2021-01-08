@@ -71,10 +71,11 @@ const PersonCircleDiv = styled.div`
     box-sizing: border-box;
     cursor: text;
     opacity: ${props => props.theme.hide ? constants.HIDDEN_OPACITY : 1};
+    transition: var(--shortTransition);
 
-    --buttonDisplay: none;
+    --buttonOpacity: 0;
     &:hover {
-        --buttonDisplay: initial;
+        --buttonOpacity: 1;
     }
 `
 
@@ -92,10 +93,11 @@ const NameInput = styled.input`
 `
 
 const Button = styled.span`
-    display: var(--buttonDisplay);
+    opacity: var(--buttonOpacity);
     font-size: var(--personCircleButtonFontSize);
     padding: var(--personCircleButtonPadding);
     cursor: pointer;
+    transition: var(--shortTransition);
 
     &:hover {
         text-decoration: underline;

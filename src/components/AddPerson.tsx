@@ -15,12 +15,13 @@ function AddPerson() {
     
     const handleClick = () => {
         const hue = findDistinctHue(people.list.map(person => person.hue))
-        const newPerson = new Person('', constants.DEFAULT_NAME, hue, false, (new Date()).getTime())
+        const newPerson = new Person('', constants.DEFAULT_NAME, hue, false, (new Date()).getTime(), 0)
         firebase.firestore().collection(constants.PEOPLE_COLLECTION).add({
             name: newPerson.name,
             hue: newPerson.hue,
             hide: newPerson.hide,
-            created: newPerson.created
+            created: newPerson.created,
+            elected: newPerson.elected
         }).then(docRef => {
             document.getElementById(docRef.id)?.click()
         })

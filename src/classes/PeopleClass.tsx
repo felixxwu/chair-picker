@@ -20,7 +20,8 @@ export default class PeopleClass {
             if (person.hue === undefined) warning('person has no hue')
             if (person.hide === undefined) warning('person has no hide attribute')
             if (person.created === undefined) warning('person has no created attribute')
-            this.list.push(new Person(person.id, person.name, person.hue, person.hide, person.created))
+            if (person.elected === undefined) warning('person has no elected attribute')
+            this.list.push(new Person(person.id, person.name, person.hue, person.hide, person.created, person.elected))
         })
     }
 
