@@ -4,6 +4,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { RecoilRoot } from 'recoil';
+import firebase from 'firebase'
+import "firebase/firestore"
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBUAQD9nlKAJTbdBEUgOx6h8qmsWRBH_sQ",
+    authDomain: "chair-picker.firebaseapp.com",
+    projectId: "chair-picker",
+    storageBucket: "chair-picker.appspot.com",
+    messagingSenderId: "1035876189218",
+    appId: "1:1035876189218:web:aa3e1b9d40fc1daf2cb67b",
+    measurementId: "G-1HP1P0266H"
+};
+
+firebase.initializeApp(firebaseConfig)
+  
 
 ReactDOM.render(
     <React.StrictMode>

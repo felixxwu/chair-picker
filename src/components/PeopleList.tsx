@@ -2,6 +2,7 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components'
 import peopleAtom from '../atoms/peopleAtom';
+import AddPerson from './AddPerson';
 import PersonCircle from './PersonCircle';
 
 function PeopleList() {
@@ -9,9 +10,10 @@ function PeopleList() {
     
     return (
         <PeopleListDiv>
-            {people.list.map(person => (
+            {people.getSortedList().map(person => (
                 <PersonCircle id={person.id} key={person.id}></PersonCircle>
             ))}
+            <AddPerson></AddPerson>
         </PeopleListDiv>
     );
 }

@@ -2,7 +2,11 @@ import React, { useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components'
 import peopleAtom from '../atoms/peopleAtom';
+import constants from '../utils/constants';
+import hsl2rgb from '../utils/hsl2rgb';
 import warning from '../utils/warning';
+import firebase from 'firebase/app'
+import "firebase/firestore"
 
 function PersonCircle(props: {
     id: string
@@ -12,6 +16,8 @@ function PersonCircle(props: {
     const inputRef = useRef<HTMLInputElement>(null)
     if (person === null) return warning('person is null')
 
+    const colour = hsl2rgb(person.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
+
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         people.updatePerson(props.id, {name: event.target.value}, setPeople)
     }
@@ -19,18 +25,35 @@ function PersonCircle(props: {
     const handleClick = () => {
         if (inputRef.current === null) return warning('inputRef is null')
         inputRef.current.focus()
+        inputRef.current.setSelectionRange(0, inputRef.current.value.length)
+    }
+
+    const handleDelete = () => {
+        firebase.firestore().collection(constants.PEOPLE_COLLECTION).doc(props.id).delete()
     }
 
     return (
-        <PersonCircleDiv className="grid3x3" onClick={handleClick}>
+        <PersonCircleDiv
+            id={props.id}
+            className="grid3x3"
+            onClick={handleClick}
+            theme={{colour}}
+        >
             <Button className="a2">hide</Button>
-            <NameInput className="a5" value={person.name} onChange={handleNameChange} ref={inputRef} theme={{nameLength: person.name.length}}/>
-            <Button className="a8">delete</Button>
+            <NameInput
+                className="a5"
+                value={person.name}
+                onChange={handleNameChange}
+                ref={inputRef}
+                theme={{nameLength: person.name.length}}
+            />
+            <Button className="a8" onClick={handleDelete}>delete</Button>
         </PersonCircleDiv>
     );
 }
 
 const PersonCircleDiv = styled.div`
+    background-color: ${props => props.theme.colour};
     color: var(--white);
     width: var(--personCircleWidth);
     height: var(--personCircleHeight);
