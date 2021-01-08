@@ -38,6 +38,11 @@ export default class PeopleClass {
         return unhiddenPeople.concat(hiddenPeople)
     }
 
+    getElected() {
+        if (this.list.length === 0) return null
+        return this.list.slice().sort((a, b) => a.elected < b.elected ? 1 : -1)[0]
+    }
+
     deepCopy() {
         return new PeopleClass(this.toJson())
     }

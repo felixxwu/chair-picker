@@ -25,6 +25,7 @@ const PeopleListDiv = styled.div`
     grid-template-columns: repeat(auto-fill, var(--personCircleWidth));
     grid-template-rows: repeat(auto-fill, var(--personCircleHeight));
     grid-gap: var(--personCircleMargin);
+    padding: var(--personCircleMargin);
 `
 
 export default PeopleList;

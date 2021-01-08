@@ -71,6 +71,7 @@ const PersonCircleDiv = styled.div`
     box-sizing: border-box;
     cursor: text;
     opacity: ${props => props.theme.hide ? constants.HIDDEN_OPACITY : 1};
+    box-shadow: var(--personCircleBoxShadow);
     transition: var(--shortTransition);
 
     --buttonOpacity: 0;

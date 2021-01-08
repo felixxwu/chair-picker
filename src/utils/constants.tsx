@@ -7,7 +7,11 @@ const constants = {
     HIDDEN_OPACITY: 0.4,
     HIDE_TEXT: "hide",
     UNHIDE_TEXT: "unhide",
-    DELETE_TEXT: "delete"
+    DELETE_TEXT: "delete",
+    SHUFFLE_LENGTH: 30, // number of items to shuffle
+    SHUFFLE_BASE_INTERVAL: 900, // simple linear scalar, lower values means faster shuffling
+    SHUFFLE_SLOPE: 0.8, // lower values means the first delay is more similar to the last delay, high
+    SHUFFLE_PAUSE: 0 // ms to wait after shuffle ended
 }
 
 export default constants

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './css/grid3x3.css';
 import styled from 'styled-components'
-import PersonCircle from './components/PersonCircle'
 import PeopleList from './components/PeopleList';
 import firebase from 'firebase/app'
 import "firebase/firestore"
 import { useRecoilState } from 'recoil';
 import peopleAtom from './atoms/peopleAtom';
 import PeopleClass from './classes/PeopleClass';
+import ElectedPerson from './components/ElectedPerson';
 
 function App() {
     const [people, setPeople] = useRecoilState(peopleAtom)
@@ -24,6 +24,7 @@ function App() {
     return (
         <AppDiv className="grid3x3">
             <Scrollable>
+                <ElectedPerson></ElectedPerson>
                 {loading ? (
                     <span>Loading dev team...</span>
                 ) : (
@@ -44,6 +45,20 @@ const AppDiv = styled.div`
     --personCircleMargin: 15px;
     --personCircleButtonFontSize: 10px;
     --personCircleButtonPadding: 5px;
+    --personCircleBoxShadow: 0px 1px 15px hsl(0deg 0% 0% / 50%);
+
+    --bigPersonCircleWidth: 150px;
+    --bigPersonCircleHeight: var(--bigPersonCircleWidth);
+    --bigPersonCircleTextWidth: 120px;
+    --bigPersonCircleMaxFontSize: 60px;
+    --bigPersonCircleBorderRadius: calc(var(--bigPersonCircleHeight) / 2);
+
+    --electButtonPadding: 15px;
+    --electButtonBorderRadius: 8px;
+    --electedPadding: 50px;
+    --titleFontSize: 30px;
+    --titlePadding: 20px;
+
     --addPersonIconWidth: 30px;
     --peopleListWidth: min(100vw, 600px);
     --lightness: 80%;
@@ -51,10 +66,11 @@ const AppDiv = styled.div`
     --offBlack: hsl(0, 0%, 25%);
     --shortTransition: 0.3s;
     --extraScrollPadding: 100px;
+    --lexend: 'Lexend Deca', sans-serif;
 
     width: 100%;
     height: 100%;
-    font-family: 'Lexend Deca', sans-serif;
+    font-family: var(--lexend);
     color: var(--white);
 
     user-select: none; /* supported by Chrome and Opera */
