@@ -1,26 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './css/grid3x3.css';
+import styled from 'styled-components'
+import PersonCircle from './components/PersonCircle'
+import PeopleList from './components/PeopleList';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <AppDiv className="grid3x3">
+            <PeopleList></PeopleList>
+        </AppDiv>
+    );
 }
+
+const AppDiv = styled.div`
+    --personCircleWidth: 100px;
+    --personCircleHeight: var(--personCircleWidth);
+    --personCircleTextWidth: 80px;
+    --personCircleMaxFontSize: 40px;
+    --personCircleBorderRadius: calc(var(--personCircleHeight) / 2);
+    --personCircleBorderWidth: 3px;
+    --personCircleMargin: 10px;
+    --personCircleButtonFontSize: 10px;
+    --personCircleButtonPadding: 5px;
+
+    --peopleListWidth: min(100vw, 600px);
+    
+    --white: hsl(0, 0%, 80%);
+
+    width: 100%;
+    height: 100%;
+`
 
 export default App;
