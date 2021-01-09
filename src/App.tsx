@@ -62,11 +62,11 @@ const AppDiv = styled.div`
     --personCircleTextWidth: 70px;
     --personCircleMaxFontSize: 40px;
     --personCircleBorderRadius: calc(var(--personCircleHeight) / 2);
-    --personCircleBorderWidth: 2px;
-    --personCircleMargin: 15px;
+    --personCircleBorderWidth: 4px;
+    --personCircleMargin: 25px;
     --personCircleButtonFontSize: 10px;
     --personCircleButtonPadding: 5px;
-    --personCircleBoxShadow: 0px 1px 15px hsl(0deg 0% 0% / 50%);
+    --personCircleBoxShadow: 0px 1px 15px hsl(0deg 0% 0% / 30%);
 
     --bigPersonCircleWidth: 150px;
     --bigPersonCircleHeight: var(--bigPersonCircleWidth);
@@ -76,15 +76,15 @@ const AppDiv = styled.div`
 
     --electButtonPadding: 15px;
     --electButtonBorderRadius: 8px;
-    --electedPadding: 50px;
-    --titleFontSize: 30px;
-    --titlePadding: 20px;
+    --electedPadding: 0px;
+    --titleFontSize: 25px;
+    --titlePadding: 40px;
 
     --addPersonIconWidth: 30px;
     --peopleListWidth: min(100vw, 600px);
     --lightness: 80%;
     --white: hsl(0, 0%, var(--lightness));
-    --offBlack: hsl(0, 0%, 25%);
+    --offBlack: hsl(0, 0%, 30%);
     --shortTransition: 0.3s;
     --extraScrollPadding: 30px;
     --lexend: 'Lexend Deca', sans-serif;
