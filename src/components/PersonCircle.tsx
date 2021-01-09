@@ -17,9 +17,22 @@ function PersonCircle(props: {
     if (person === null) return warning('person is null')
 
     const colour = hsl2rgb(person.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
+    const colourBorder = hsl2rgb(person.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS_BORDER, 1)
 
     const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.value.length === 0) {
+            handleDelete()
+            return
+        }
         people.updatePerson(props.id, {name: event.target.value}, setPeople)
+    }
+
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            if (inputRef.current === null) return warning('inputRef is null')
+            inputRef.current.blur()
+        }
     }
 
     const handleClick = () => {
@@ -42,7 +55,7 @@ function PersonCircle(props: {
             id={props.id}
             className="grid3x3"
             onClick={handleClick}
-            theme={{colour, hide: person.hide}}
+            theme={{colour, hide: person.hide, colourBorder}}
         >
             <Button className="a2" onClick={handleHide}>
                 {person.hide ? constants.UNHIDE_TEXT : constants.HIDE_TEXT}
@@ -51,6 +64,7 @@ function PersonCircle(props: {
                 className="a5"
                 value={person.name}
                 onChange={handleNameChange}
+                onKeyPress={handleKeyPress}
                 ref={inputRef}
                 theme={{nameLength: person.name.length}}
             />
@@ -67,7 +81,7 @@ const PersonCircleDiv = styled.div`
     width: var(--personCircleWidth);
     height: var(--personCircleHeight);
     border-radius: var(--personCircleBorderRadius);
-    border: var(--personCircleBorderWidth) solid var(--white);
+    border: var(--personCircleBorderWidth) solid ${props => props.theme.colourBorder};
     box-sizing: border-box;
     cursor: text;
     opacity: ${props => props.theme.hide ? constants.HIDDEN_OPACITY : 1};
