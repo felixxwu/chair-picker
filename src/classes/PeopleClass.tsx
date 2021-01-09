@@ -40,7 +40,8 @@ export default class PeopleClass {
 
     getElected() {
         if (this.list.length === 0) return null
-        return this.list.slice().sort((a, b) => a.elected < b.elected ? 1 : -1)[0]
+        if (this.list.filter(p => !p.hide).length === 0) return null
+        return this.list.filter(p => !p.hide).sort((a, b) => a.elected < b.elected ? 1 : -1)[0]
     }
 
     deepCopy() {

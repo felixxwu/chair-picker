@@ -19,7 +19,8 @@ function ElectedPerson() {
         let randomPeople = []
         const offset = Math.floor(Math.random() * constants.SHUFFLE_LENGTH)
         for (let i = 0; i < constants.SHUFFLE_LENGTH; i++) {
-            const randomPerson = people.list[(i + offset) % people.list.length]
+            const unhiddenPeople = people.list.filter(p => !p.hide)
+            const randomPerson = unhiddenPeople[(i + offset) % unhiddenPeople.length]
             randomPeople.push(randomPerson)
         }
         return randomPeople
@@ -54,10 +55,11 @@ function ElectedPerson() {
     if (elected === null) return warning('elected person is null')
 
     const colour = hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
+    const colourBorder = hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS_BORDER, 1)
 
     const handleElect = () => {
         if (shufflingPerson !== null) return
-        const candidates = people.list.filter(person => person.id !== elected.id)
+        const candidates = people.list.filter(p => p.id !== elected.id).filter(p => !p.hide)
         const newElected = candidates[Math.floor(Math.random() * candidates.length)]
         people.updatePerson(newElected.id, {elected: (new Date()).getTime()}, setPeople)
         shufflePeople(getListOfPeople()).then(() => {
@@ -68,7 +70,7 @@ function ElectedPerson() {
     return (
         <ElectedPersonDiv className="grid3x3" theme={{colour, shuffling: shufflingPerson !== null}}>
             <Title className="a2">Today's chair is...</Title>
-            <BigCircle className="a5 grid3x3">
+            <BigCircle className="a5 grid3x3" theme={{colourBorder}}>
                 <Name theme={{nameLength: elected.name.length}}>
                     {elected.name}
                 </Name>
@@ -90,7 +92,7 @@ const BigCircle = styled.div`
     height: var(--bigPersonCircleHeight);
     color: var(--white);
     border-radius: var(--bigPersonCircleBorderRadius);
-    border: var(--personCircleBorderWidth) solid var(--white);
+    border: var(--personCircleBorderWidth) solid ${props => props.theme.colourBorder};
     box-sizing: border-box;
     box-shadow: var(--personCircleBoxShadow);
     opacity: var(--opacity);
