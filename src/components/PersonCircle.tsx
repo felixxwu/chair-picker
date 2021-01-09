@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components'
 import peopleAtom from '../atoms/peopleAtom';
@@ -12,8 +12,16 @@ function PersonCircle(props: {
     id: string
 }) {
     const [people, setPeople] = useRecoilState(peopleAtom)
+    const [scale, setScale] = useState(0)
     const person = people.getPerson(props.id)
     const inputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        setTimeout(() => {
+            setScale(1)
+        }, Math.random() * constants.INIT_ANIMATION_TIME);
+    }, [])
+
     if (person === null) return warning('person is null')
 
     const colour = hsl2rgb(person.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
@@ -55,7 +63,7 @@ function PersonCircle(props: {
             id={props.id}
             className="grid3x3"
             onClick={handleClick}
-            theme={{colour, hide: person.hide, colourBorder}}
+            theme={{colour, hide: person.hide, colourBorder, scale}}
         >
             <Button className="a2" onClick={handleHide}>
                 {person.hide ? constants.UNHIDE_TEXT : constants.HIDE_TEXT}
@@ -87,6 +95,7 @@ const PersonCircleDiv = styled.div`
     opacity: ${props => props.theme.hide ? constants.HIDDEN_OPACITY : 1};
     box-shadow: var(--personCircleBoxShadow);
     transition: var(--shortTransition);
+    transform: scale(${props => props.theme.scale});
 
     --buttonOpacity: 0;
     &:hover {

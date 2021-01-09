@@ -13,6 +13,14 @@ function ElectedPerson() {
     const [people, setPeople] = useRecoilState(peopleAtom)
     const [isNewElect, setIsNewElect] = useRecoilState(isNewElectAtom)
     const [shufflingPerson, setShufflingPerson] = useState<Person | null>(null)
+    const [scale, setScale] = useState(0)
+
+    useEffect(() => {
+        setTimeout(() => {
+            setScale(1)
+        }, 500);
+    }, [])
+
     const elected = shufflingPerson === null ? people.getElected() : shufflingPerson
 
     const getListOfPeople = useCallback(() => {
@@ -68,7 +76,7 @@ function ElectedPerson() {
     }
 
     return (
-        <ElectedPersonDiv className="grid3x3" theme={{colour, shuffling: shufflingPerson !== null}}>
+        <ElectedPersonDiv className="grid3x3" theme={{colour, shuffling: shufflingPerson !== null, scale}}>
             <Title className="a2">Today's chair is...</Title>
             <BigCircle className="a5 grid3x3" theme={{colourBorder}}>
                 <Name theme={{nameLength: elected.name.length}}>
@@ -84,6 +92,8 @@ const ElectedPersonDiv = styled.div`
     padding: var(--electedPadding);
     --colour: ${props => props.theme.colour};
     --opacity: ${props => props.theme.shuffling ? constants.HIDDEN_OPACITY : 1};
+    transition: var(--longTransition);
+    transform: scale(${props => props.theme.scale});
 `
 
 const BigCircle = styled.div`

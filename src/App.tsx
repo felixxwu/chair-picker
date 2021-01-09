@@ -85,7 +85,8 @@ const AppDiv = styled.div`
     --lightness: 80%;
     --white: hsl(0, 0%, var(--lightness));
     --offBlack: hsl(0, 0%, 30%);
-    --shortTransition: 0.3s;
+    --shortTransition: 0.5s;
+    --longTransition: 2s;
     --extraScrollPadding: 30px;
     --lexend: 'Lexend Deca', sans-serif;
 

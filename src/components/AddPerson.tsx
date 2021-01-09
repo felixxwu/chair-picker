@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components'
 import constants from '../utils/constants';
 import AddIconSvg from '../images/add.svg'
@@ -11,7 +11,13 @@ import Person from '../classes/PersonClass';
 
 function AddPerson() {
     const people = useRecoilValue(peopleAtom)
+    const [scale, setScale] = useState(0)
 
+    useEffect(() => {
+        setTimeout(() => {
+            setScale(1)
+        }, constants.INIT_ANIMATION_TIME);
+    }, [])
     
     const handleClick = () => {
         const hue = findDistinctHue(people.list.map(person => person.hue))
@@ -28,14 +34,13 @@ function AddPerson() {
     }
 
     return (
-        <AddPersonDiv className="grid3x3" onClick={handleClick}>
+        <AddPersonDiv className="grid3x3" onClick={handleClick} theme={{scale}}>
             <AddIcon src={AddIconSvg}/>
         </AddPersonDiv>
     );
 }
 
 const AddPersonDiv = styled.div`
-    background-color: ${props => props.theme.colour};
     color: var(--white);
     width: var(--personCircleWidth);
     height: var(--personCircleHeight);
@@ -43,6 +48,8 @@ const AddPersonDiv = styled.div`
     border: var(--personCircleBorderWidth) solid var(--white);
     box-sizing: border-box;
     cursor: pointer;
+    transition: var(--shortTransition);
+    transform: scale(${props => props.theme.scale});
 
     &:hover {
         background-color: var(--offBlack);
