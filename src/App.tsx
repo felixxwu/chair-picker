@@ -89,12 +89,12 @@ const AppDiv = styled.div`
     --extraScrollPadding: 30px;
     --lexend: 'Lexend Deca', sans-serif;
 
-    width: 100%;
-    height: 100%;
+    width: 100vw;
     font-family: var(--lexend);
     color: var(--white);
     padding-top: var(--extraScrollPadding);
     padding-bottom: var(--extraScrollPadding);
+    overflow-x: hidden;
 
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
