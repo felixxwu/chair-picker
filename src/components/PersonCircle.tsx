@@ -9,17 +9,18 @@ import firebase from 'firebase/app'
 import "firebase/firestore"
 
 function PersonCircle(props: {
-    id: string
+    id: string,
+    index: number
 }) {
     const [people, setPeople] = useRecoilState(peopleAtom)
-    const [scale, setScale] = useState(0)
+    const [hidden, SetHidden] = useState(true)
     const person = people.getPerson(props.id)
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         setTimeout(() => {
-            setScale(1)
-        }, Math.random() * constants.INIT_ANIMATION_TIME);
+            SetHidden(false)
+        }, props.index * constants.INIT_ANIMATION_TIME);
     }, [])
 
     if (person === null) return warning('person is null')
@@ -63,7 +64,7 @@ function PersonCircle(props: {
             id={props.id}
             className="grid3x3"
             onClick={handleClick}
-            theme={{colour, hide: person.hide, colourBorder, scale}}
+            theme={{colour, hide: person.hide, colourBorder, hidden}}
         >
             <Button className="a2" onClick={handleHide}>
                 {person.hide ? constants.UNHIDE_TEXT : constants.HIDE_TEXT}
@@ -92,10 +93,22 @@ const PersonCircleDiv = styled.div`
     border: var(--personCircleBorderWidth) solid ${props => props.theme.colourBorder};
     box-sizing: border-box;
     cursor: text;
-    opacity: ${props => props.theme.hide ? constants.HIDDEN_OPACITY : 1};
     box-shadow: var(--personCircleBoxShadow);
     transition: var(--shortTransition);
-    transform: scale(${props => props.theme.scale});
+
+    ${props => {
+        if (props.theme.hidden) {
+            return `
+                opacity: 0;
+                transform: translateY(var(--fadeUpDistance));
+            `
+        } else {
+            return `
+                opacity: ${props.theme.hide ? constants.HIDDEN_OPACITY : 1};
+                transform: translateY(0);
+            `
+        }
+    }}
 
     --buttonOpacity: 0;
     &:hover {

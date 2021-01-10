@@ -9,14 +9,16 @@ import peopleAtom from '../atoms/peopleAtom';
 import findDistinctHue from '../utils/findDistinctHue';
 import Person from '../classes/PersonClass';
 
-function AddPerson() {
+function AddPerson(props: {
+    animationDelay: number
+}) {
     const people = useRecoilValue(peopleAtom)
-    const [scale, setScale] = useState(0)
+    const [hidden, SetHidden] = useState(true)
 
     useEffect(() => {
         setTimeout(() => {
-            setScale(1)
-        }, constants.INIT_ANIMATION_TIME);
+            SetHidden(false)
+        }, props.animationDelay);
     }, [])
     
     const handleClick = () => {
@@ -34,7 +36,7 @@ function AddPerson() {
     }
 
     return (
-        <AddPersonDiv className="grid3x3" onClick={handleClick} theme={{scale}}>
+        <AddPersonDiv className="grid3x3" onClick={handleClick} theme={{hidden}}>
             <AddIcon src={AddIconSvg}/>
         </AddPersonDiv>
     );
@@ -49,7 +51,20 @@ const AddPersonDiv = styled.div`
     box-sizing: border-box;
     cursor: pointer;
     transition: var(--shortTransition);
-    transform: scale(${props => props.theme.scale});
+
+    ${props => {
+        if (props.theme.hidden) {
+            return `
+                opacity: 0;
+                transform: translateY(var(--fadeUpDistance));
+            `
+        } else {
+            return `
+                opacity: 1;
+                transform: translateY(0);
+            `
+        }
+    }}
 
     &:hover {
         background-color: var(--offBlack);

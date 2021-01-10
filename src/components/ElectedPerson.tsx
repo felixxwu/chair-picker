@@ -13,12 +13,16 @@ function ElectedPerson() {
     const [people, setPeople] = useRecoilState(peopleAtom)
     const [isNewElect, setIsNewElect] = useRecoilState(isNewElectAtom)
     const [shufflingPerson, setShufflingPerson] = useState<Person | null>(null)
-    const [scale, setScale] = useState(0)
+    const [hidden, setHidden] = useState(true)
+    const [showButton, setShowButton] = useState(false)
 
     useEffect(() => {
         setTimeout(() => {
-            setScale(1)
-        }, 500);
+            setHidden(false)
+        }, 300);
+        setTimeout(() => {
+            setShowButton(true)
+        }, 1300);
     }, [])
 
     const elected = shufflingPerson === null ? people.getElected() : shufflingPerson
@@ -76,7 +80,12 @@ function ElectedPerson() {
     }
 
     return (
-        <ElectedPersonDiv className="grid3x3" theme={{colour, shuffling: shufflingPerson !== null, scale}}>
+        <ElectedPersonDiv className="grid3x3" theme={{
+            colour,
+            shuffling: shufflingPerson !== null,
+            hidden,
+            showButton
+        }}>
             <Title className="a2">Today's chair is...</Title>
             <BigCircle className="a5 grid3x3" theme={{colourBorder}}>
                 <Name theme={{nameLength: elected.name.length}}>
@@ -89,11 +98,26 @@ function ElectedPerson() {
 }
 
 const ElectedPersonDiv = styled.div`
-    padding: var(--electedPadding);
     --colour: ${props => props.theme.colour};
     --opacity: ${props => props.theme.shuffling ? constants.HIDDEN_OPACITY : 1};
+    --buttonOpacity: ${props => props.theme.showButton ? 1 : 0};
+    padding: var(--electedPadding);
     transition: var(--longTransition);
     transform: scale(${props => props.theme.scale});
+
+    ${props => {
+        if (props.theme.hidden) {
+            return `
+                opacity: 0;
+                transform: translateY(calc(-1 * var(--fadeUpDistance)));
+            `
+        } else {
+            return `
+                opacity: 1;
+                transform: translateY(0);
+            `
+        }
+    }}
 `
 
 const BigCircle = styled.div`
@@ -133,7 +157,10 @@ const ElectButton = styled.button`
     margin: var(--titlePadding);
     border-radius: var(--electButtonBorderRadius);
     font-family: var(--lexend);
+    font-size: var(--textFontSize);
     cursor: pointer;
+    opacity: var(--buttonOpacity);
+    transition: var(--longTransition);
 `
 
 export default ElectedPerson;

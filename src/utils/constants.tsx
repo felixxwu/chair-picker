@@ -13,7 +13,7 @@ const constants = {
     SHUFFLE_BASE_INTERVAL: 900, // simple linear scalar, lower values means faster shuffling
     SHUFFLE_SLOPE: 0.8, // lower values means the first delay is more similar to the last delay, high
     SHUFFLE_PAUSE: 0, // ms to wait after shuffle ended
-    INIT_ANIMATION_TIME: 2000
+    INIT_ANIMATION_TIME: 100
 }
 
 export default constants

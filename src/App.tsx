@@ -44,14 +44,19 @@ function App() {
     
     return (
         <AppDiv className="grid3x3">
-            <div>
-                <ElectedPerson></ElectedPerson>
-                {loading ? (
-                    <span>Loading dev team...</span>
-                ) : (
-                    <PeopleList></PeopleList>
-                )}
-            </div>
+            {loading ? (
+                <span>Loading dev team...</span>
+            ) : (
+                <>
+                    <div className="a5">
+                        <ElectedPerson></ElectedPerson>
+                        <PeopleList></PeopleList>
+                    </div>
+                    <div className="a8">
+                        <Href href="https://github.com/felixxwu/chair-picker">GitHub</Href>
+                    </div>
+                </>
+            )}
         </AppDiv>
     );
 }
@@ -80,20 +85,22 @@ const AppDiv = styled.div`
     --titleFontSize: 25px;
     --titlePadding: 40px;
 
+    --textFontSize: 15px;
+    --lightness: 65%;
+    --white: hsl(0, 0%, var(--lightness));
     --addPersonIconWidth: 30px;
     --peopleListWidth: min(100vw, 600px);
-    --lightness: 80%;
-    --white: hsl(0, 0%, var(--lightness));
     --offBlack: hsl(0, 0%, 30%);
     --shortTransition: 0.5s;
     --longTransition: 2s;
-    --extraScrollPadding: 30px;
+    --fadeUpDistance: 100px;
+    --extraScrollPadding: 100px;
     --lexend: 'Lexend Deca', sans-serif;
 
     width: 100vw;
+    min-height: calc(100vh - var(--extraScrollPadding));
     font-family: var(--lexend);
     color: var(--white);
-    padding-top: var(--extraScrollPadding);
     padding-bottom: var(--extraScrollPadding);
     overflow-x: hidden;
 
@@ -104,6 +111,12 @@ const AppDiv = styled.div`
     -ms-user-select: none; /* Internet Explorer/Edge */
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
+`
+
+const Href = styled.a`
+    color: var(--offBlack);
+    margin-top: var(--extraScrollPadding);
+    font-size: var(--textFontSize);
 `
 
 export default App;
