@@ -26,31 +26,30 @@ function ElectedPerson() {
     }, [])
 
     const elected = shufflingPerson === null ? people.getElected() : shufflingPerson
-
-    const getListOfPeople = useCallback(() => {
+    
+    const getShuffleList = useCallback(() => {
         let randomPeople = []
         const offset = Math.floor(Math.random() * constants.SHUFFLE_LENGTH)
         for (let i = 0; i < constants.SHUFFLE_LENGTH; i++) {
-            const unhiddenPeople = people.list.filter(p => !p.hide)
-            const randomPerson = unhiddenPeople[(i + offset) % unhiddenPeople.length]
+            const candidates = people.getCandidates()
+            const randomPerson = candidates[(i + offset) % candidates.length]
             randomPeople.push(randomPerson)
         }
         return randomPeople
     }, [people])
 
-    const shufflePeople = useCallback((listOfPeople: Person[]) => {
+    const shufflePeople = useCallback((peopleLeftToShuffle: Person[]) => {
         return new Promise<void>(res => {
-            const delay = constants.SHUFFLE_BASE_INTERVAL * (1 / Math.pow(listOfPeople.length + 1, constants.SHUFFLE_SLOPE))
-            if (listOfPeople.length === 0) {
+            const delay = constants.SHUFFLE_BASE_INTERVAL * (1 / Math.pow(peopleLeftToShuffle.length + 1, constants.SHUFFLE_SLOPE))
+            if (peopleLeftToShuffle.length === 0) {
                 setTimeout(() => {
                     res()
                 }, delay + constants.SHUFFLE_PAUSE);
                 return
             }
-            
-            setShufflingPerson(listOfPeople[0])
+            setShufflingPerson(peopleLeftToShuffle[0])
             setTimeout(() => {
-                shufflePeople(listOfPeople.slice(1)).then(res)
+                shufflePeople(peopleLeftToShuffle.slice(1)).then(res)
             }, delay);
         })
     }, [])
@@ -58,26 +57,41 @@ function ElectedPerson() {
     useEffect(() => {
         if (isNewElect) {
             setIsNewElect(false)
-            shufflePeople(getListOfPeople()).then(() => {
+            shufflePeople(getShuffleList()).then(() => {
                 setShufflingPerson(null)
             })
         }
-    }, [isNewElect, getListOfPeople, setIsNewElect, shufflePeople])
-    
-    if (elected === null) return warning('elected person is null')
-
-    const colour = hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
-    const colourBorder = hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS_BORDER, 1)
+    }, [isNewElect, getShuffleList, setIsNewElect, shufflePeople])
 
     const handleElect = () => {
         if (shufflingPerson !== null) return
-        const candidates = people.list.filter(p => p.id !== elected.id).filter(p => !p.hide)
-        const newElected = candidates[Math.floor(Math.random() * candidates.length)]
-        people.updatePerson(newElected.id, {elected: (new Date()).getTime()}, setPeople)
-        shufflePeople(getListOfPeople()).then(() => {
+        // if elected person is already set, hide current one and choose new
+        if (elected !== null) {
+            people.updatePerson(elected.id, {hide: true}, setPeople)
+        }
+        const newElect = people.pickNewElect()
+        if (newElect === null) return
+        people.updatePerson(newElect.id, {elected: (new Date()).getTime()}, setPeople)
+        shufflePeople(getShuffleList()).then(() => {
             setShufflingPerson(null)
         })
     }
+
+    const colour = elected === null ? (
+        "var(--black)"
+    ) : (
+        hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS, 1)
+    )
+    const colourBorder = elected === null ? (
+        "var(--offBlack)"
+    ) : (
+        hsl2rgb(elected.hue / 360, constants.PERSON_SATURATION, constants.PERSON_LIGHTNESS_BORDER, 1)
+    )
+    const name = elected === null ? (
+        "?"
+    ) : (
+        elected.name
+    )
 
     return (
         <ElectedPersonDiv className="grid3x3" theme={{
@@ -88,11 +102,18 @@ function ElectedPerson() {
         }}>
             <Title className="a2">Today's chair is...</Title>
             <BigCircle className="a5 grid3x3" theme={{colourBorder}}>
-                <Name theme={{nameLength: elected.name.length}}>
-                    {elected.name}
+                <Name theme={{nameLength: name.length}}>
+                    {name}
                 </Name>
             </BigCircle>
-            <ElectButton className="a8" onClick={handleElect}>Elect a new chair</ElectButton>
+            <ElectButton className="a8" onClick={handleElect}>{(() => {
+                if (shufflingPerson !== null) return "Drum roll please..."
+                if (elected === null) {
+                    return "Elect today's chair"
+                } else {
+                    return "Not here? Elect someone else"
+                }
+            })()}</ElectButton>
         </ElectedPersonDiv>
     );
 }

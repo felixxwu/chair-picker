@@ -40,8 +40,39 @@ export default class PeopleClass {
 
     getElected() {
         if (this.list.length === 0) return null
-        if (this.list.filter(p => !p.hide).length === 0) return null
-        return this.list.filter(p => !p.hide).sort((a, b) => a.elected < b.elected ? 1 : -1)[0]
+        if (this.electedToday() === false) return null
+
+        const unhiddenPeople = this.list.filter(p => !p.hide)
+        if (unhiddenPeople.length === 0) return null
+
+        const lastElected = unhiddenPeople.sort((a, b) => a.elected < b.elected ? 1 : -1)[0]
+        return lastElected
+    }
+
+    electedToday() {
+        if (this.list.length === 0) return false
+
+        const lastElected = this.list.slice().sort((a, b) => a.elected < b.elected ? 1 : -1)[0]
+        const lastElectedDate = (new Date(lastElected.elected)).toUTCString().slice(0, 16)
+        const today = (new Date()).toUTCString().slice(0, 16)
+        return lastElectedDate === today
+    }
+
+    getCandidates() {
+        return this.list.filter(person => {
+            const elected = this.getElected()
+            if (person.hide === true) return false
+            if (elected === null) return true
+            if (person.id === elected.id) return false
+            return true
+        })
+    }
+
+    pickNewElect() {
+        const candidates = this.getCandidates()
+        const newElect = candidates[Math.floor(Math.random() * candidates.length)]
+        if (newElect === undefined) return null
+        return newElect
     }
 
     deepCopy() {

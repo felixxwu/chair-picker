@@ -4,7 +4,7 @@ const constants = {
     PERSON_LIGHTNESS_BORDER: 0.5,
     DEFAULT_NAME: "Name",
     PEOPLE_COLLECTION: "people",
-    UPDATE_DEBOUNCE_TIME: 500,
+    UPDATE_DEBOUNCE_TIME: 300,
     HIDDEN_OPACITY: 0.3,
     HIDE_TEXT: "hide",
     UNHIDE_TEXT: "unhide",

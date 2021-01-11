@@ -4,12 +4,14 @@ import styled from 'styled-components'
 import PeopleList from './components/PeopleList';
 import firebase from 'firebase/app'
 import "firebase/firestore"
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import peopleAtom from './atoms/peopleAtom';
 import PeopleClass from './classes/PeopleClass';
 import ElectedPerson from './components/ElectedPerson';
 import isNewElectAtom from './atoms/isNewElectAtom';
 import constants from './utils/constants';
+
+let firstLoad = true
 
 function App() {
     const setPeople = useSetRecoilState(peopleAtom)
@@ -29,6 +31,12 @@ function App() {
             })
             if (shouldSetIsNewElect) {
                 setIsNewElect(true)
+            }
+            if (firstLoad && newPeople.list.length !== 0 && newPeople.electedToday() === false) {
+                firstLoad = false
+                newPeople.list.filter(person => person.hide).forEach(hiddenPesron => {
+                    newPeople.updatePerson(hiddenPesron.id, {hide: false}, setPeople)
+                })
             }
             setLoading(false)
         })
