@@ -86,7 +86,7 @@ const AppDiv = styled.div`
     --titlePadding: 40px;
 
     --textFontSize: 15px;
-    --lightness: 65%;
+    --lightness: 75%;
     --white: hsl(0, 0%, var(--lightness));
     --addPersonIconWidth: 30px;
     --peopleListWidth: min(100vw, 600px);
