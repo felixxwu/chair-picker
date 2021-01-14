@@ -19,7 +19,7 @@ function AddPerson(props: {
         setTimeout(() => {
             SetHidden(false)
         }, props.animationDelay);
-    }, [])
+    }, [props.animationDelay])
     
     const handleClick = () => {
         const hue = findDistinctHue(people.list.map(person => person.hue))
@@ -47,7 +47,7 @@ const AddPersonDiv = styled.div`
     width: var(--personCircleWidth);
     height: var(--personCircleHeight);
     border-radius: var(--personCircleBorderRadius);
-    border: var(--personCircleBorderWidth) solid var(--white);
+    border: var(--personCircleBorderWidth) solid var(--offBlack);
     box-sizing: border-box;
     cursor: pointer;
     transition: var(--shortTransition);

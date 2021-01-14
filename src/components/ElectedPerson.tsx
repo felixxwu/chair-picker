@@ -5,7 +5,6 @@ import "firebase/firestore"
 import { useRecoilState } from 'recoil';
 import peopleAtom from '../atoms/peopleAtom';
 import Person from '../classes/PersonClass';
-import warning from '../utils/warning';
 import hsl2rgb from '../utils/hsl2rgb';
 import isNewElectAtom from '../atoms/isNewElectAtom';
 
@@ -57,22 +56,22 @@ function ElectedPerson() {
     useEffect(() => {
         if (isNewElect) {
             setIsNewElect(false)
-            shufflePeople(getShuffleList()).then(() => {
-                setShufflingPerson(null)
-            })
+            // shufflePeople(getShuffleList()).then(() => {
+            //     setShufflingPerson(null)
+            // })
         }
     }, [isNewElect, getShuffleList, setIsNewElect, shufflePeople])
 
     const handleElect = () => {
         if (shufflingPerson !== null) return
         // if elected person is already set, hide current one and choose new
-        if (elected !== null) {
-            people.updatePerson(elected.id, {hide: true}, setPeople)
-        }
-        const newElect = people.pickNewElect()
-        if (newElect === null) return
-        people.updatePerson(newElect.id, {elected: (new Date()).getTime()}, setPeople)
         shufflePeople(getShuffleList()).then(() => {
+            if (elected !== null) {
+                people.updatePerson(elected.id, {hide: true}, setPeople)
+            }
+            const newElect = people.pickNewElect()
+            if (newElect === null) return
+            people.updatePerson(newElect.id, {elected: (new Date()).getTime()}, setPeople)
             setShufflingPerson(null)
         })
     }

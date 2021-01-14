@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import PeopleList from './components/PeopleList';
 import firebase from 'firebase/app'
 import "firebase/firestore"
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import peopleAtom from './atoms/peopleAtom';
 import PeopleClass from './classes/PeopleClass';
 import ElectedPerson from './components/ElectedPerson';

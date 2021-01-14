@@ -21,7 +21,7 @@ function PersonCircle(props: {
         setTimeout(() => {
             SetHidden(false)
         }, props.index * constants.INIT_ANIMATION_TIME);
-    }, [])
+    }, [props.index])
 
     if (person === null) return warning('person is null')
 

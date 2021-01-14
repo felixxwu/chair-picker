@@ -32,7 +32,7 @@ export default class PeopleClass {
     }
 
     getSortedList() {
-        const sortingFunction = (a: Person, b: Person) => a.created > b.created ? 1 : -1
+        const sortingFunction = (a: Person, b: Person) => a.elected < b.elected ? 1 : -1
         const hiddenPeople = this.list.filter(person => person.hide).sort(sortingFunction)
         const unhiddenPeople = this.list.filter(person => !person.hide).sort(sortingFunction)
         return unhiddenPeople.concat(hiddenPeople)
@@ -59,13 +59,10 @@ export default class PeopleClass {
     }
 
     getCandidates() {
-        return this.list.filter(person => {
-            const elected = this.getElected()
-            if (person.hide === true) return false
-            if (elected === null) return true
-            if (person.id === elected.id) return false
-            return true
-        })
+        const unhiddenPeople = this.list.filter(p => !p.hide)
+        const halfLength = Math.floor(unhiddenPeople.length / 2)
+        const notRecentlyEelected = unhiddenPeople.sort((a, b) => a.elected < b.elected ? 1 : -1).slice(halfLength)
+        return notRecentlyEelected
     }
 
     pickNewElect() {
