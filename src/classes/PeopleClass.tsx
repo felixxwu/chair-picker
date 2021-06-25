@@ -60,8 +60,8 @@ export default class PeopleClass {
 
     getCandidates() {
         const unhiddenPeople = this.list.filter(p => !p.hide)
-        const halfLength = Math.floor(unhiddenPeople.length / 2)
-        const notRecentlyEelected = unhiddenPeople.sort((a, b) => a.elected < b.elected ? 1 : -1).slice(halfLength)
+        const numPeopleFromEndToShuffle = 3
+        const notRecentlyEelected = unhiddenPeople.sort((a, b) => a.elected < b.elected ? -1 : 1).slice(0, numPeopleFromEndToShuffle)
         return notRecentlyEelected
     }
 
