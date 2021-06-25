@@ -67,7 +67,7 @@ function ElectedPerson() {
         // if elected person is already set, hide current one and choose new
         shufflePeople(getShuffleList()).then(() => {
             if (elected !== null) {
-                people.updatePerson(elected.id, {hide: true}, setPeople)
+                people.updatePerson(elected.id, {hide: true, elected: 0}, setPeople)
             }
             const newElect = people.pickNewElect()
             if (newElect === null) return
